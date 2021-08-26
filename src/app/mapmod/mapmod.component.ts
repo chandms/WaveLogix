@@ -13,6 +13,8 @@ import { Point } from 'ol/geom';
 import { Vector } from 'ol/layer';
 import { DevicesService } from '../services/devices.service';
 import { Device } from '../device/device.component';
+import {altKeyOnly, click, pointerMove} from 'ol/events/condition';
+import Overlay from "ol/Overlay";
 
 @Component({
   selector: 'app-mapmod',
@@ -26,8 +28,14 @@ export class MapmodComponent implements OnInit {
   latitude: number = 40.4259;
   longitude: number = -86.9081;
 
+  
+
 
   ngOnInit(): void {
+
+    
+  
+
     this.map = new Map({
       target: 'all_device_map',
       layers: [
@@ -41,16 +49,16 @@ export class MapmodComponent implements OnInit {
       })
     });
 
+  
+
     this.service.allDeviceInfo()
       .subscribe(Response => {
         let markers = new Array;
         Response.forEach((device: Device) => {
           if (device.latitude != null && device.longitude != null){
             let device_location = olProj.fromLonLat([device.longitude, device.latitude]);
-            console.log(device_location);
-            // markers.push(new Feature({
-            //   geometry: new Point(device_location)
-            // })) 
+             
+            
             var aFeature = new Feature({
               geometry: new Point(device_location)
             })
@@ -61,6 +69,9 @@ export class MapmodComponent implements OnInit {
               })
             })
             aFeature.setStyle(aFeatureStyle)
+            aFeature.addEventListener('mouseout',function(){
+                console.log("Hi this will be popup");
+            });
             markers.push(aFeature);
           }
         })
